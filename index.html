@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>XAU Vision · XAUUSD Trading</title>
+<link rel="icon" type="image/png" sizes="64x64" href="favicon.png">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#0A1222">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0A1222; --bg2:#111C34; --panel:rgba(205,218,245,.05); --line:rgba(205,218,245,.14);
+  --ink:#F3F5FA; --mute:#9AA8C4; --opal:#A8C2F0; --lilac:#D5D9E4; --up:#9AD9BF; --down:#EBA3A3;
+  --serif:'Cormorant Garamond',Georgia,serif; --sans:'Manrope',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.6;
+  background-image:radial-gradient(1000px 700px at 90% -15%,rgba(120,150,230,.20),transparent 60%),radial-gradient(800px 600px at -10% 55%,rgba(90,110,190,.12),transparent 60%),linear-gradient(180deg,#0A1222,#0D1730 60%,#0A1222);
+  background-attachment:fixed;padding-bottom:env(safe-area-inset-bottom)}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--opal);outline-offset:3px;border-radius:6px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 clamp(18px,4vw,40px)}
+nav{position:sticky;top:0;z-index:20;backdrop-filter:blur(16px);background:rgba(10,18,34,.72);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
+.logo{font-family:var(--serif);font-size:1.6rem;font-weight:500;letter-spacing:.02em}
+.logo i{font-style:italic;color:var(--opal)}
+.logo{display:flex;align-items:center}
+.logo img{display:block;width:52px;height:52px;border-radius:50%;box-shadow:0 0 0 1px rgba(245,200,107,.35),0 6px 22px -6px rgba(245,200,107,.45);transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s}
+.logo:hover img{transform:scale(1.1) rotate(-4deg);box-shadow:0 0 0 1px rgba(245,200,107,.7),0 10px 30px -6px rgba(245,200,107,.7)}
+nav ul{display:flex;gap:26px;list-style:none;padding:0;font-size:.92rem;color:var(--mute)}
+nav ul a:hover{color:var(--ink)}
+.hero{padding:clamp(48px,9vw,110px) 0 48px;display:grid;gap:40px;grid-template-columns:1.2fr 1fr;align-items:end}
+h1{font-family:var(--serif);font-weight:400;font-size:clamp(2.8rem,7.5vw,5.8rem);line-height:.98;letter-spacing:-.01em}
+.hero p{color:var(--mute);max-width:46ch;margin-top:20px;font-weight:300;font-size:1.05rem}
+.clock{border:1px solid var(--line);border-radius:28px;padding:28px;background:var(--panel);backdrop-filter:blur(10px)}
+.clock .t{font-family:var(--serif);font-size:clamp(3rem,7vw,4.6rem);line-height:1;font-variant-numeric:tabular-nums}
+.clock .d{color:var(--mute);font-size:.9rem;margin-top:6px}
+.state{display:inline-flex;align-items:center;gap:10px;margin-top:18px;padding:8px 16px;border-radius:99px;background:rgba(168,194,240,.12);color:var(--opal);font-weight:500;font-size:.92rem}
+.state.off{background:rgba(235,163,163,.12);color:var(--down)}
+.dot{width:8px;height:8px;border-radius:50%;background:currentColor;animation:pulse 2s infinite}
+@keyframes pulse{50%{opacity:.25}}
+section{padding:56px 0}
+h2{font-family:var(--serif);font-weight:500;font-size:clamp(2rem,4vw,2.9rem);line-height:1.1;margin-bottom:8px}
+.sub{color:var(--mute);margin-bottom:30px;font-weight:300}
+.sessions{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.s{border:1px solid var(--line);border-radius:22px;padding:22px;background:var(--panel);position:relative;overflow:hidden}
+.s h3{font-family:var(--serif);font-weight:500;font-size:1.5rem}
+.s .lt{color:var(--mute);font-size:.85rem;font-variant-numeric:tabular-nums}
+.s .st{margin-top:14px;font-size:.9rem;color:var(--mute)}
+.s.on{border-color:rgba(168,194,240,.55);background:linear-gradient(160deg,rgba(168,194,240,.16),rgba(201,206,219,.06))}
+.s.on .st{color:var(--opal)}
+.bar{height:3px;border-radius:3px;background:var(--line);margin-top:14px;overflow:hidden}
+.bar b{display:block;height:100%;width:0;background:var(--opal);transition:width 1s}
+.chartbox{border:1px solid var(--line);border-radius:28px;overflow:hidden;background:var(--bg2);height:min(640px,75vh);min-height:420px}
+.chartbox .tradingview-widget-container,.chartbox .tradingview-widget-container__widget{height:100%;width:100%}
+.quote{margin-bottom:16px;border-radius:22px;overflow:hidden;border:1px solid var(--line)}
+.calc{border:1px solid var(--line);border-radius:28px;background:var(--panel);padding:clamp(20px,3vw,36px)}
+.inst{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;margin-bottom:22px}
+.tabs{display:flex;gap:6px;padding:5px;border-radius:99px;background:rgba(0,0,0,.18);overflow-x:auto;max-width:100%;scrollbar-width:none}
+.tabs button{all:unset;cursor:pointer;padding:10px 18px;border-radius:99px;font-size:.9rem;color:var(--mute);white-space:nowrap;transition:.25s}
+.tabs button[aria-selected=true]{background:var(--ink);color:var(--bg);font-weight:600}
+.tabs button:focus-visible{outline:2px solid var(--opal)}
+label{display:block;font-size:.85rem;color:var(--mute);margin-bottom:6px}
+input,select{width:100%;font:inherit;color:var(--ink);background:rgba(0,0,0,.2);border:1px solid var(--line);border-radius:14px;padding:13px 15px;font-size:1rem;transition:border .2s}
+input:focus,select:focus{outline:none;border-color:var(--opal)}
+select option{background:var(--bg);color:var(--ink)}
+.pane{display:none;grid-template-columns:1fr 1fr;gap:28px}
+.pane.on{display:grid}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-content:start}
+.fields .full{grid-column:1/-1}
+.out{border-radius:22px;padding:26px;background:linear-gradient(160deg,rgba(168,194,240,.14),rgba(201,206,219,.08));border:1px solid var(--line);display:flex;flex-direction:column;justify-content:center;gap:16px}
+.out .big{font-family:var(--serif);font-size:clamp(2.6rem,6vw,3.8rem);line-height:1;font-variant-numeric:tabular-nums}
+.out .big.neg{color:var(--down)}.out .big.pos{color:var(--up)}
+.row{display:flex;justify-content:space-between;gap:12px;font-size:.95rem;border-top:1px solid var(--line);padding-top:12px}
+.row span:first-child{color:var(--mute)}
+.row span:last-child{font-variant-numeric:tabular-nums;font-weight:500}
+.seg{display:flex;gap:6px}
+.seg button{all:unset;cursor:pointer;flex:1;text-align:center;padding:12px;border-radius:14px;border:1px solid var(--line);color:var(--mute)}
+.seg button.a{background:var(--ink);color:var(--bg);font-weight:600}
+footer{border-top:1px solid var(--line);padding:36px 0 60px;color:var(--mute);font-size:.85rem}
+@media(max-width:900px){
+  .hero{grid-template-columns:1fr}.sessions{grid-template-columns:1fr 1fr}.pane.on{grid-template-columns:1fr}
+  nav ul{gap:16px;font-size:.85rem}
+}
+@media(max-width:520px){
+  .sessions{grid-template-columns:1fr}.fields{grid-template-columns:1fr}nav ul li:nth-child(1){display:none}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+
+h1{background:linear-gradient(120deg,#FFFFFF 10%,#C9D3EA 45%,#8FA6DC 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.logo i{color:#C9D3EA}
+.clock,.s,.calc{background:linear-gradient(160deg,rgba(205,218,245,.08),rgba(205,218,245,.02));box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 30px 60px -30px rgba(0,0,0,.6)}
+.s.on{background:linear-gradient(160deg,rgba(120,150,230,.26),rgba(120,150,230,.06));border-color:rgba(168,194,240,.6)}
+.tabs button[aria-selected=true],.seg button.a{background:linear-gradient(135deg,#FFFFFF,#C9D3EA);color:#0A1222}
+.out{background:linear-gradient(160deg,rgba(120,150,230,.20),rgba(205,218,245,.04));box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
+.out .big{background:linear-gradient(120deg,#fff,#BFCCEB);-webkit-background-clip:text;background-clip:text;color:transparent}
+.out .big.pos{background:none;color:var(--up)}.out .big.neg{background:none;color:var(--down)}
+.bar b{background:linear-gradient(90deg,#7F9CE0,#C9D3EA)}
+.state{background:rgba(168,194,240,.14)}
+.chartbox{box-shadow:0 40px 80px -40px rgba(0,0,0,.7)}
+
+/* Foto opsionale: vendos foton në të njëjtin folder dhe zëvendëso "none" me url(gold.jpg) */
+:root{--photo:none}
+.photo{position:fixed;inset:0;z-index:0;pointer-events:none;background:var(--photo) center/cover no-repeat;opacity:.3;mix-blend-mode:luminosity;-webkit-mask-image:linear-gradient(180deg,#000,transparent 75%);mask-image:linear-gradient(180deg,#000,transparent 75%)}
+#bg{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+main,footer{position:relative;z-index:1}
+.hero{position:relative}
+.bars{position:absolute;right:-30px;top:-70px;width:min(560px,54vw);z-index:-1;pointer-events:none;animation:float 9s ease-in-out infinite}
+.bars svg{width:100%;height:auto;display:block;transition:transform .25s ease-out;filter:drop-shadow(0 40px 50px rgba(0,0,0,.55))}
+@keyframes float{50%{transform:translateY(-14px)}}
+.shine{animation:sweep 7s ease-in-out infinite}
+@keyframes sweep{0%{transform:translateX(0)}55%,100%{transform:translateX(520px)}}
+.glow{position:relative}
+.glow::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .35s;background:radial-gradient(380px circle at var(--mx,50%) var(--my,50%),rgba(168,194,240,.2),transparent 45%)}
+.glow:hover::before{opacity:1}
+.pane.on{animation:paneIn .4s ease-out}
+@keyframes paneIn{from{opacity:0;transform:translateY(8px)}}
+.big.pop{animation:pop .4s ease-out}
+@keyframes pop{from{opacity:.3;transform:translateY(6px) scale(.98)}}
+.s{cursor:default;transition:transform .3s,border-color .3s}
+.s:hover{transform:translateY(-4px)}
+@media(max-width:900px){.bars{width:86vw;right:-14vw;top:-10px;opacity:.4}}
+@media(prefers-reduced-motion:reduce){.bars{animation:none}}
+.chartbox{display:flex;align-items:center;justify-content:center}
+.tvfail{padding:30px;text-align:center;color:var(--mute);max-width:440px}
+.tvfail a{display:inline-block;margin-top:14px;padding:12px 22px;border-radius:99px;background:linear-gradient(135deg,#fff,#C9D3EA);color:#0A1222;font-weight:600}
+.pricebar{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+.px{font-family:var(--serif);font-size:clamp(2.4rem,6vw,3.6rem);line-height:1;font-variant-numeric:tabular-nums;transition:color .3s}
+.px.up{color:var(--up)}.px.dn{color:var(--down)}
+.chg{margin-left:14px;font-weight:600;font-size:1.05rem}.chg.up{color:var(--up)}.chg.dn{color:var(--down)}
+.src{color:var(--mute);font-size:.85rem;margin-top:8px}
+.tfs{max-width:380px;width:100%}.tfs button{padding:10px 4px;font-size:.9rem}
+.chartbox{position:relative;display:block}
+#ch{position:absolute;inset:0}
+.lg{position:absolute;left:16px;top:12px;z-index:3;font-size:.85rem;color:var(--mute);font-variant-numeric:tabular-nums;pointer-events:none}
+.chartbox .tvfail{position:absolute;inset:0;margin:auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:4}
+.chartbox .tvfail[hidden]{display:none}
+.tvfail button{all:unset;cursor:pointer;padding:12px 22px;border-radius:99px;background:linear-gradient(135deg,#fff,#C9D3EA);color:#0A1222;font-weight:600}
+
+#zc{position:absolute;inset:0;width:100%;height:100%;z-index:2;pointer-events:none}
+.an{display:grid;grid-template-columns:1.4fr 1fr;gap:20px}
+.an-main,.plan{border:1px solid var(--line);border-radius:28px;padding:clamp(20px,3vw,34px);background:linear-gradient(160deg,rgba(205,218,245,.08),rgba(205,218,245,.02));box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 30px 60px -30px rgba(0,0,0,.6)}
+.an-side{display:grid;gap:20px;align-content:start}
+.plan{padding:24px}.plan.buy{border-color:rgba(154,217,191,.4)}.plan.sell{border-color:rgba(235,163,163,.4)}
+.plan .ph{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.plan h3{font-family:var(--serif);font-weight:500;font-size:1.7rem}.plan.buy h3{color:var(--up)}.plan.sell h3{color:var(--down)}
+.plan .row{margin-top:10px}.plan p{color:var(--mute);font-size:.92rem}
+.tag{font-size:.8rem;padding:5px 12px;border-radius:99px;background:rgba(255,255,255,.12);color:var(--ink)}
+.bt{font-family:var(--serif);font-size:clamp(2.2rem,5vw,3.2rem);line-height:1}.bt.up{color:var(--up)}.bt.dn{color:var(--down)}
+.bs{color:var(--mute);margin-top:6px;font-size:.92rem}
+.meter{position:relative;height:6px;border-radius:6px;margin:22px 0 8px;background:linear-gradient(90deg,var(--down),rgba(205,218,245,.25) 50%,var(--up))}
+.meter i{position:absolute;top:50%;width:16px;height:16px;border-radius:50%;background:#fff;transform:translate(-50%,-50%);box-shadow:0 0 0 5px rgba(255,255,255,.18);transition:left .7s}
+.mlab{display:flex;justify-content:space-between;font-size:.8rem;color:var(--mute)}
+#adesc p{color:#CBD5EA;font-weight:300;margin-top:14px;max-width:68ch}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0}
+.chip{padding:7px 14px;border-radius:99px;border:1px solid var(--line);font-size:.85rem;color:var(--mute);font-variant-numeric:tabular-nums}.chip b{color:var(--ink);font-weight:600}
+.sw{display:flex;gap:10px;align-items:center;color:var(--mute);cursor:pointer;margin:0;font-size:.9rem}.sw input{width:18px;height:18px;padding:0;accent-color:#A8C2F0}
+.mtf{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:20px}
+.m{all:unset;cursor:pointer;border:1px solid var(--line);border-radius:20px;padding:16px 18px;background:rgba(205,218,245,.04);transition:.25s}
+.m:hover{border-color:rgba(168,194,240,.6);transform:translateY(-3px)}.m.on{background:rgba(120,150,230,.2);border-color:rgba(168,194,240,.6)}
+.m:focus-visible{outline:2px solid #A8C2F0}
+.m b{font-family:var(--serif);font-size:1.4rem;font-weight:500;display:block}.m span{font-size:.88rem;color:var(--mute);font-variant-numeric:tabular-nums}
+.m .u{color:var(--up)}.m .d{color:var(--down)}
+.disc{margin-top:22px;color:var(--mute);font-size:.82rem;max-width:80ch}
+@media(max-width:900px){.an{grid-template-columns:1fr}.mtf{grid-template-columns:1fr 1fr}}
+
+/* Butoni Llogarit dhe rezultatet */
+.btn{all:unset;cursor:pointer;grid-column:1/-1;text-align:center;padding:14px;border-radius:14px;font-weight:600;background:linear-gradient(135deg,#fff,#C9D3EA);color:#0A1222;transition:.2s}
+.btn:hover{transform:translateY(-2px)}
+.btn:focus-visible{outline:2px solid var(--opal);outline-offset:3px}
+.out.stale .big{opacity:.3}
+.out .note{font-size:.82rem;color:var(--mute);min-height:1.2em}
+.out .note.err{color:var(--down)}
+
+/* Faqja të mos lëvizë majtas-djathtas */
+html,body{overflow-x:clip;max-width:100%;overscroll-behavior-x:none}
+main,.wrap,.hero{overflow-x:clip}
+.bars{right:0}
+@media(max-width:900px){.bars{right:0;width:80vw}}
+
+/* Menuja hamburger në telefon */
+.hb{display:none}
+@media(max-width:700px){
+  nav .wrap>div{margin-left:auto}
+  .hb{all:unset;cursor:pointer;display:flex;flex-direction:column;justify-content:center;gap:5px;width:42px;height:42px;margin-left:10px;padding:0 10px;border:1px solid var(--line);border-radius:12px;box-sizing:border-box}
+  .hb:focus-visible{outline:2px solid var(--opal)}
+  .hb span{display:block;height:2px;border-radius:2px;background:var(--ink);transition:transform .25s,opacity .25s}
+  nav.open .hb span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+  nav.open .hb span:nth-child(2){opacity:0}
+  nav.open .hb span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+  nav ul{display:none!important;position:absolute;left:0;right:0;top:100%;flex-direction:column;gap:0;
+    background:rgba(10,18,34,.98);border-bottom:1px solid var(--line);
+    padding:6px clamp(18px,4vw,40px) 14px;font-size:1.05rem}
+  nav.open ul{display:flex!important}
+  nav ul li,nav ul li:nth-child(1),nav ul li:nth-child(2){display:list-item!important}
+  nav ul li a{display:block;padding:14px 0;border-bottom:1px solid var(--line)}
+  nav ul li:last-child a{border-bottom:0}
+}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+<script src="addon.js"></script>
+</head>
+<body>
+<div class="photo"></div><canvas id="bg" aria-hidden="true"></canvas>
+<nav><div class="wrap">
+  <a class="logo" href="#top" aria-label="XAU Vision"><img src="logo.png" alt="XAU Vision" width="52" height="52"></a>
+  <ul><li><a href="#sesionet">Sesionet</a></li><li><a href="#grafiku">Grafiku</a></li><li><a href="#analiza">Analiza</a></li><li><a href="#llogaritesit">Llogaritësit</a></li></ul>
+</div></nav>
+
+<main id="top">
+<div class="wrap">
+  <div class="hero">
+    <div class="bars" aria-hidden="true"><svg id="barsvg" viewBox="0 0 520 340"></svg></div>
+    <div>
+      <h1>Tregu, i qetë dhe i matur.</h1>
+      <p>Hapësira ime e punës për ar. Çmimi live, sesioni që po zhvillohet dhe llogaritësit që më duhen para çdo hyrjeje.</p>
+    </div>
+    <div class="clock glow" aria-live="off">
+      <div class="t" id="clk">--:--:--</div>
+      <div class="d" id="dt">Tiranë</div>
+      <div class="state" id="mstate"><span class="dot"></span><span id="mtxt">Duke ngarkuar</span></div>
+    </div>
+  </div>
+
+  <section id="sesionet">
+    <h2>Sesionet e tregut</h2>
+    <p class="sub">Orët e hapjes dhe të mbylljes së çdo sesioni janë sipas orës së Tiranës.</p>
+    <div class="sessions" id="sess"></div>
+  </section>
+
+  <section id="grafiku">
+    <h2>XAUUSD live</h2>
+    <p class="sub">Candlestick live që përditësohet çdo sekondë. Zgjidh timeframe-in dhe kalo kursorin mbi qirinj për OHLC.</p>
+    <div class="pricebar">
+      <div><span class="px" id="px">—</span><span class="chg" id="chg"></span>
+        <div class="src">XAU live · burimi PAXG/USDT, token i arit që ndjek çmimin spot</div></div>
+      <div class="seg tfs" id="tf">
+        <button data-t="1m">1m</button><button data-t="5m">5m</button><button data-t="15m" class="a">15m</button>
+        <button data-t="1h">1h</button><button data-t="4h">4h</button><button data-t="1d">1D</button>
+      </div>
+    </div>
+    <div class="chartbox"><div id="ch"></div><canvas id="zc" aria-hidden="true"></canvas><div id="lg" class="lg"></div>
+      <div id="chmsg" class="tvfail" hidden><span>Nuk u lidh me burimin e çmimit. Kontrollo internetin dhe provo përsëri.</span><button id="retry">Provo përsëri</button></div></div>
+  </section>
+
+  <section id="analiza">
+    <h2>Analiza e tregut</h2>
+    <p class="sub">Llogaritet automatikisht nga qirinjtë live të timeframe-it që ke zgjedhur. Zonat shfaqen edhe në grafik.</p>
+    <div class="an">
+      <div class="an-main glow">
+        <div class="bt" id="bt">Duke analizuar…</div><div class="bs" id="bsub"></div>
+        <div class="meter"><i id="mk" style="left:50%"></i></div>
+        <div class="mlab"><span>Sell</span><span>Anash</span><span>Buy</span></div>
+        <div id="adesc"></div>
+        <div class="chips" id="chips"></div>
+        <label class="sw"><input type="checkbox" id="zt" checked> Shfaq zonat Buy dhe Sell në grafik</label>
+      </div>
+      <div class="an-side"><div class="plan buy glow" id="pb"></div><div class="plan sell glow" id="ps"></div></div>
+    </div>
+    <div class="mtf" id="mtf"></div>
+    <p class="disc">Analizë teknike automatike për edukim, bazuar në EMA, RSI, MACD, ATR dhe pikat e kthimit të çmimit. Nuk është sinjal ose këshillë financiare. Gjithmonë konfirmo në platformën tënde dhe përdor stop loss.</p>
+  </section>
+
+  <section id="llogaritesit">
+    <h2>Llogaritësit</h2>
+    <p class="sub">Zgjidh instrumentin një herë, vlen për të gjithë llogaritësit. Rezultati del kur shtyp Llogarit.</p>
+    <div class="calc glow">
+      <div class="inst">
+        <div class="tabs" role="tablist" id="tabs">
+          <button role="tab" aria-selected="true" data-p="p1">Fitim / Humbje</button>
+          <button role="tab" aria-selected="false" data-p="p2">Pips</button>
+          <button role="tab" aria-selected="false" data-p="p3">Margjina</button>
+          <button role="tab" aria-selected="false" data-p="p4">Madhësia e pozicionit</button>
+          <button role="tab" aria-selected="false" data-p="p5">Risk : Reward</button>
+        </div>
+        <div style="min-width:200px"><label for="sym">Instrumenti</label>
+          <select id="sym"></select></div>
+      </div>
+
+      <!-- 1 Fitim / Humbje -->
+      <div class="pane on" id="p1">
+        <div class="fields">
+          <div class="full"><label>Drejtimi</label><div class="seg" id="dir"><button class="a" data-d="1">Buy</button><button data-d="-1">Sell</button></div></div>
+          <div><label for="a1">Çmimi i hyrjes</label><input id="a1" type="number" step="any" value="2650.00" inputmode="decimal"></div>
+          <div><label for="b1">Çmimi i daljes</label><input id="b1" type="number" step="any" value="2662.50" inputmode="decimal"></div>
+          <div class="full"><label for="c1">Lot</label><input id="c1" type="number" step="any" value="0.10" inputmode="decimal"></div>
+          <button class="btn" data-run="p1">Llogarit</button>
+        </div>
+        <div class="out glow stale"><div class="big" id="o1">—</div>
+          <div class="note" id="n1"></div>
+          <div class="row"><span>Pips</span><span id="o1a">—</span></div>
+          <div class="row"><span>Vlera e një pip (për lotin tënd)</span><span id="o1b">—</span></div></div>
+      </div>
+
+      <!-- 2 Pips -->
+      <div class="pane" id="p2">
+        <div class="fields">
+          <div><label for="a2">Lot</label><input id="a2" type="number" step="any" value="1" inputmode="decimal"></div>
+          <div><label for="b2">Numri i pips</label><input id="b2" type="number" step="any" value="50" inputmode="decimal"></div>
+          <div class="full needpx"><label for="c2">Çmimi aktual (për çiftet USD/xxx)</label><input id="c2" type="number" step="any" value="150" inputmode="decimal"></div>
+          <button class="btn" data-run="p2">Llogarit</button>
+        </div>
+        <div class="out glow stale"><div class="big" id="o2">—</div>
+          <div class="note" id="n2"></div>
+          <div class="row"><span>Vlera e një pip (1 lot)</span><span id="o2a">—</span></div>
+          <div class="row"><span>Madhësia e një pip</span><span id="o2b">—</span></div></div>
+      </div>
+
+      <!-- 3 Margjina -->
+      <div class="pane" id="p3">
+        <div class="fields">
+          <div><label for="a3">Lot</label><input id="a3" type="number" step="any" value="1" inputmode="decimal"></div>
+          <div><label for="b3">Çmimi aktual</label><input id="b3" type="number" step="any" value="2650" inputmode="decimal"></div>
+          <div><label for="lev">Leverage</label><select id="lev"></select></div>
+          <div><label for="e3">Balanca (USD, opsionale)</label><input id="e3" type="number" step="any" value="10000" inputmode="decimal"></div>
+          <button class="btn" data-run="p3">Llogarit</button>
+        </div>
+        <div class="out glow stale"><div class="big" id="o3">—</div>
+          <div class="note" id="n3"></div>
+          <div class="row"><span>Vlera nominale e pozicionit</span><span id="o3a">—</span></div>
+          <div class="row"><span>Margjina si % e balancës</span><span id="o3b">—</span></div>
+          <div class="row"><span>Margjina e lirë</span><span id="o3c">—</span></div></div>
+      </div>
+
+      <!-- 4 Madhësia e pozicionit -->
+      <div class="pane" id="p4">
+        <div class="fields">
+          <div><label for="a4">Balanca (USD)</label><input id="a4" type="number" step="any" value="10000" inputmode="decimal"></div>
+          <div><label for="b4">Rreziku (%)</label><input id="b4" type="number" step="any" value="1" inputmode="decimal"></div>
+          <div class="full"><label for="c4">Stop loss (pips)</label><input id="c4" type="number" step="any" value="40" inputmode="decimal"></div>
+          <div class="full needpx"><label for="d4">Çmimi aktual (për çiftet USD/xxx)</label><input id="d4" type="number" step="any" value="150" inputmode="decimal"></div>
+          <button class="btn" data-run="p4">Llogarit</button>
+        </div>
+        <div class="out glow stale"><div class="big" id="o4">—</div>
+          <div class="note" id="n4"></div>
+          <div class="row"><span>Rreziku në para</span><span id="o4a">—</span></div>
+          <div class="row"><span>Rreziku për pip</span><span id="o4b">—</span></div></div>
+      </div>
+
+      <!-- 5 Risk : Reward -->
+      <div class="pane" id="p5">
+        <div class="fields">
+          <div class="full"><label for="a5">Hyrja</label><input id="a5" type="number" step="any" value="2650" inputmode="decimal"></div>
+          <div><label for="b5">Stop loss</label><input id="b5" type="number" step="any" value="2645" inputmode="decimal"></div>
+          <div><label for="c5">Take profit</label><input id="c5" type="number" step="any" value="2665" inputmode="decimal"></div>
+          <div class="full"><label for="d5">Lot</label><input id="d5" type="number" step="any" value="0.10" inputmode="decimal"></div>
+          <button class="btn" data-run="p5">Llogarit</button>
+        </div>
+        <div class="out glow stale"><div class="big" id="o5">—</div>
+          <div class="note" id="n5"></div>
+          <div class="row"><span>Rreziku</span><span id="o5a">—</span></div>
+          <div class="row"><span>Fitimi i mundshëm</span><span id="o5b">—</span></div>
+          <div class="row"><span>Win rate minimal për të mos humbur</span><span id="o5c">—</span></div></div>
+      </div>
+    </div>
+  </section>
+</div>
+</main>
+
+<footer><div class="wrap">© XAU Vision. Vetëm për informim dhe llogaritje. Nuk përbën këshillë financiare. Tregtimi me levë mban rrezik humbjeje.</div></footer>
+
+<script>
+const INS={
+ XAUUSD:{n:'XAUUSD · Ar',c:100,p:0.1,q:'usd'},
+ XAGUSD:{n:'XAGUSD · Argjend',c:5000,p:0.01,q:'usd'},
+ EURUSD:{n:'EURUSD',c:100000,p:0.0001,q:'usd'},
+ GBPUSD:{n:'GBPUSD',c:100000,p:0.0001,q:'usd'},
+ AUDUSD:{n:'AUDUSD',c:100000,p:0.0001,q:'usd'},
+ USDJPY:{n:'USDJPY',c:100000,p:0.01,q:'base'},
+ USDCAD:{n:'USDCAD',c:100000,p:0.0001,q:'base'},
+ USDCHF:{n:'USDCHF',c:100000,p:0.0001,q:'base'}
+};
+const $=id=>document.getElementById(id), v=id=>parseFloat($(id).value)||0;
+const money=n=>(n<0?'-':'')+'$'+Math.abs(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const num=(n,d=2)=>n.toLocaleString('en-US',{maximumFractionDigits:d});
+const sym=$('sym'),lev=$('lev');
+Object.keys(INS).forEach(k=>sym.add(new Option(INS[k].n,k)));
+[1,2,5,10,20,30,50,100,200,300,400,500,1000,2000].forEach(x=>lev.add(new Option('1:'+x,x)));
+lev.value='100';
+const I=()=>INS[sym.value];
+// vlera e 1 pip për 1 lot në USD; për çiftet USD/xxx pjesëtohet me çmimin aktual
+const pipVal=ref=>{const i=I(),b=i.c*i.p;return i.q==='base'?(ref>0?b/ref:0):b};
+
+let dir=1;
+const stale=id=>{const o=document.querySelector('#'+id+' .out');if(!o)return;o.classList.add('stale');const n=o.querySelector('.note');if(n){n.textContent='';n.className='note'}};
+document.querySelectorAll('#dir button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('#dir button').forEach(x=>x.classList.remove('a'));
+  b.classList.add('a');dir=+b.dataset.d;stale('p1');
+});
+document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('#tabs button').forEach(x=>x.setAttribute('aria-selected',x===b));
+  document.querySelectorAll('.pane').forEach(p=>p.classList.toggle('on',p.id===b.dataset.p));
+});
+function show(n,big,cls,note){
+  const e=$('o'+n);e.textContent=big;e.className='big '+(cls||'');
+  e.parentElement.classList.remove('stale');
+  const t=$('n'+n);t.textContent=note||'';t.className='note';
+  e.classList.remove('pop');void e.offsetWidth;e.classList.add('pop');
+}
+function fail(n,msg){
+  show(n,'—','',msg);$('n'+n).className='note err';
+  ['a','b','c'].forEach(s=>{const e=$('o'+n+s);if(e)e.textContent='—'});
+}
+const R={
+ p1(){
+  const i=I(),e=v('a1'),x=v('b1'),l=v('c1');
+  if(e<=0||x<=0||l<=0)return fail(1,'Plotëso çmimin e hyrjes, daljes dhe lotin.');
+  const pips=dir*(x-e)/i.p,pv=pipVal(x),pl=pips*pv*l;
+  show(1,money(pl),pl<0?'neg':pl>0?'pos':'',`${dir>0?'Buy':'Sell'} ${num(l)} lot ${sym.value} · ${e} → ${x}`);
+  $('o1a').textContent=num(pips,1);$('o1b').textContent=money(pv*l);
+ },
+ p2(){
+  const i=I(),pv=pipVal(v('c2')),l=v('a2'),p=v('b2');
+  if(l<=0||p<=0||pv<=0)return fail(2,'Plotëso lotin, pips dhe çmimin aktual.');
+  show(2,money(pv*l*p),'',`${num(p,1)} pips × ${num(l)} lot`);
+  $('o2a').textContent=money(pv);$('o2b').textContent=i.p;
+ },
+ p3(){
+  const i=I(),l=v('a3'),pr=v('b3'),L=+lev.value,bal=v('e3');
+  if(!(l>0))return fail(3,'Shkruaj lotin (më i madh se 0).');
+  if(i.q==='usd'&&!(pr>0))return fail(3,'Shkruaj çmimin aktual.');
+  if(!(L>0))return fail(3,'Zgjidh leverage-in.');
+  const notional=i.q==='base'?l*i.c:l*i.c*pr,m=notional/L;
+  show(3,money(m),'',`${num(l)} lot ${sym.value} me leverage 1:${L}`);
+  $('o3a').textContent=money(notional);
+  $('o3b').textContent=bal>0?num(m/bal*100,2)+'%':'—';
+  $('o3c').textContent=bal>0?money(bal-m):'—';
+ },
+ p4(){
+  const bal=v('a4'),rp=v('b4'),sl=v('c4'),pv=pipVal(v('d4')),risk=bal*rp/100;
+  if(bal<=0||rp<=0||sl<=0||pv<=0)return fail(4,'Plotëso balancën, rrezikun, stop loss dhe çmimin aktual.');
+  const lots=Math.floor(risk/(sl*pv)*100)/100;
+  show(4,num(lots,2)+' lot','',lots<0.01?'Stop-i është shumë i madh për këtë rrezik, as 0.01 lot nuk futet.':`Rreziku real me ${num(lots,2)} lot: ${money(lots*sl*pv)}`);
+  $('o4a').textContent=money(risk);$('o4b').textContent=money(risk/sl);
+ },
+ p5(){
+  const i=I(),en=v('a5'),s=v('b5'),t=v('c5'),l=v('d5'),pv=pipVal(en);
+  if(en<=0||s<=0||t<=0||l<=0)return fail(5,'Plotëso të gjitha fushat.');
+  const ok=(s<en&&t>en)||(s>en&&t<en);
+  if(!ok)return fail(5,'Stop loss dhe Take profit duhet të jenë në anët e kundërta të hyrjes.');
+  const rp=Math.abs(en-s)/i.p,wp=Math.abs(t-en)/i.p,rr=wp/rp;
+  show(5,'1 : '+num(rr,2),'',(t>en?'Buy':'Sell')+` · ${num(rp,1)} pips rrezik, ${num(wp,1)} pips fitim`);
+  $('o5a').textContent=money(rp*pv*l);$('o5b').textContent=money(wp*pv*l);
+  $('o5c').textContent=num(100/(1+rr),1)+'%';
+ }
+};
+document.querySelectorAll('[data-run]').forEach(b=>b.onclick=()=>R[b.dataset.run]());
+document.querySelectorAll('.pane input,.pane select').forEach(x=>{
+  x.addEventListener('input',()=>stale(x.closest('.pane').id));
+  x.addEventListener('keydown',e=>{if(e.key==='Enter')R[x.closest('.pane').id]()});
+});
+function syncSym(){
+  const base=I().q==='base';
+  document.querySelectorAll('.needpx').forEach(e=>e.hidden=!base);
+  document.querySelectorAll('.pane').forEach(p=>stale(p.id));
+}
+sym.onchange=syncSym;syncSym();
+
+// Sessions: hapja dhe mbyllja janë sipas orës së Tiranës (o = hapja, c = mbyllja)
+const S=[
+ {n:'Sidnei',tz:'Australia/Sydney',o:20,c:5},
+ {n:'Tokio',tz:'Asia/Tokyo',o:0,c:9},
+ {n:'Londër',tz:'Europe/London',o:7,c:16},
+ {n:'Nju Jork',tz:'America/New_York',o:13,c:22}
+];
+$('sess').innerHTML=S.map((s,i)=>`<div class="s glow" id="s${i}"><h3>${s.n}</h3><div class="lt" id="l${i}"></div><div class="st" id="t${i}"></div><div class="bar"><b id="sb${i}"></b></div></div>`).join('');
+const parts=(tz,d)=>{const f=new Intl.DateTimeFormat('en-GB',{timeZone:tz,hour:'2-digit',minute:'2-digit',second:'2-digit',weekday:'short',hour12:false}).formatToParts(d);const g=t=>f.find(p=>p.type===t).value;return{h:+g('hour')%24,m:+g('minute'),s:+g('second'),w:g('weekday')}};
+const fmt=m=>{const h=Math.floor(m/60),mm=m%60;return h?`${h}o ${mm}min`:`${mm}min`};
+function tick(){
+  const d=new Date(),tr=parts('Europe/Tirane',d);
+  const p2=n=>String(n).padStart(2,'0');
+  $('clk').textContent=`${p2(tr.h)}:${p2(tr.m)}:${p2(tr.s)}`;
+  $('dt').textContent='Tiranë · '+d.toLocaleDateString('sq-AL',{weekday:'long',day:'numeric',month:'long',timeZone:'Europe/Tirane'});
+  const ny=parts('America/New_York',d);
+  const closed=ny.w==='Sat'||(ny.w==='Sun'&&ny.h<17)||(ny.w==='Fri'&&ny.h>=17);
+  let open=[];
+  S.forEach((s,i)=>{
+    const p=parts(s.tz,d),lm=tr.h*60+tr.m,o=s.o*60,c=s.c*60,dur=(c-o+1440)%1440,el=(lm-o+1440)%1440;
+    const on=!closed&&el<dur;
+    $('s'+i).classList.toggle('on',on);
+    $('l'+i).textContent=`Ora ${p2(p.h)}:${p2(p.m)} · ${p2(s.o)}:00 – ${p2(s.c)}:00 (Tiranë)`;
+    $('t'+i).textContent=closed?'Tregu është i mbyllur':on?`Hapur · mbyllet pas ${fmt(dur-el)}`:`Mbyllur · hapet pas ${fmt((o-lm+1440)%1440)}`;
+    $('sb'+i).style.width=on?(el/dur*100)+'%':'0%';
+    if(on)open.push(s.n);
+  });
+  const ms=$('mstate');ms.classList.toggle('off',closed||!open.length);
+  $('mtxt').textContent=closed?'Forex i mbyllur për fundjavë':open.length?'Hapur tani: '+open.join(' + '):'Midis sesioneve, likuiditet i ulët';
+}
+tick();setInterval(tick,1000);
+
+// Bullion bars (SVG) + tilt
+(function(){
+ const bar=(x,y,sc,d)=>`<g transform="translate(${x},${y}) scale(${sc})">
+  <polygon points="40,0 260,0 300,40 0,40" fill="url(#gT)"/>
+  <polygon points="0,40 300,40 282,112 18,112" fill="url(#gF)"/>
+  <rect x="75" y="11" width="150" height="18" rx="4" fill="rgba(10,18,34,.16)" stroke="rgba(255,255,255,.5)"/>
+  <text x="150" y="25" text-anchor="middle" font-family="Cormorant Garamond,serif" font-size="14" fill="rgba(10,18,34,.55)">1 kg · fine</text>
+  <text x="150" y="88" text-anchor="middle" font-family="Cormorant Garamond,serif" font-size="30" font-weight="600" fill="rgba(10,18,34,.5)">XAU · 999.9</text>
+  <g clip-path="url(#cf)"><rect class="shine" x="-140" y="40" width="70" height="72" fill="url(#gS)" style="animation-delay:${d}s" transform="skewX(-18)"/></g>
+  <polygon points="0,40 300,40 282,112 18,112" fill="none" stroke="rgba(255,255,255,.35)"/></g>`;
+ $('barsvg').innerHTML=`<defs>
+  <linearGradient id="gT" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#A9BAE3"/></linearGradient>
+  <linearGradient id="gF" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7A91CB"/><stop offset=".45" stop-color="#C3D0EE"/><stop offset="1" stop-color="#566EAD"/></linearGradient>
+  <linearGradient id="gS" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".75"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+  <clipPath id="cf"><polygon points="0,40 300,40 282,112 18,112"/></clipPath></defs>
+  <ellipse cx="260" cy="318" rx="230" ry="16" fill="rgba(0,0,0,.35)"/>`
+  +bar(40,240,.65,0)+bar(285,246,.65,1.6)+bar(160,170,.65,3.2)+bar(150,100,.65,4.8);
+ const tilt=$('barsvg');
+ addEventListener('pointermove',e=>{
+  const nx=e.clientX/innerWidth-.5,ny=e.clientY/innerHeight-.5;
+  tilt.style.transform=`perspective(900px) rotateY(${nx*-16}deg) rotateX(${ny*12}deg)`;
+  const g=e.target.closest&&e.target.closest('.glow');
+  if(g){const r=g.getBoundingClientRect();g.style.setProperty('--mx',(e.clientX-r.left)+'px');g.style.setProperty('--my',(e.clientY-r.top)+'px')}
+ },{passive:true});
+})();
+
+// Animated candlestick background that reacts to the pointer
+(function(){
+ const cv=$('bg'),c=cv.getContext('2d'),step=16,still=matchMedia('(prefers-reduced-motion:reduce)').matches;
+ let W,H,off=0,px=-999,py=-999,K=[];
+ const size=()=>{const D=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;cv.width=W*D;cv.height=H*D;c.setTransform(D,0,0,D,0,0)};
+ const next=p=>{const o=p?p.c:100,d=(Math.random()-.47)*5,cl=o+d;return{o,c:cl,h:Math.max(o,cl)+Math.random()*3,l:Math.min(o,cl)-Math.random()*3}};
+ const fill=()=>{K=[];let p=null;for(let i=0;i<Math.ceil(W/step)+3;i++){p=next(p);K.push(p)}};
+ size();fill();
+ addEventListener('resize',()=>{size();fill()});
+ addEventListener('pointermove',e=>{px=e.clientX;py=e.clientY},{passive:true});
+ function draw(){
+  c.clearRect(0,0,W,H);
+  let mn=1e9,mx=-1e9;K.forEach(k=>{mn=Math.min(mn,k.l);mx=Math.max(mx,k.h)});
+  const top=H*.2,bot=H*.9,Y=v=>bot-(v-mn)/(mx-mn)*(bot-top);
+  K.forEach((k,i)=>{
+   const x=i*step-off,dist=Math.abs(x-px),near=Math.max(0,1-dist/200),a=.1+near*.55,up=k.c>=k.o;
+   c.strokeStyle=c.fillStyle=up?`rgba(190,208,248,${a})`:`rgba(110,132,200,${a*.8})`;
+   c.lineWidth=1;c.beginPath();c.moveTo(x+4,Y(k.h));c.lineTo(x+4,Y(k.l));c.stroke();
+   const y1=Y(Math.max(k.o,k.c)),y2=Y(Math.min(k.o,k.c));c.fillRect(x,y1,8,Math.max(2,y2-y1));
+  });
+  if(px>0){c.strokeStyle='rgba(190,208,248,.12)';c.setLineDash([4,6]);c.beginPath();c.moveTo(px,0);c.lineTo(px,H);c.moveTo(0,py);c.lineTo(W,py);c.stroke();c.setLineDash([])}
+  if(!still){off+=.18;if(off>=step){off-=step;K.shift();K.push(next(K[K.length-1]))}requestAnimationFrame(draw)}
+ }
+ draw();
+})();
+
+// Native XAU chart (Lightweight Charts + Binance PAXG/USDT live)
+(function(){
+ const el=$('ch'),SYM='PAXGUSDT',HOSTS=['https://api.binance.com','https://data-api.binance.vision'];
+ const off=-new Date().getTimezoneOffset()*60;
+ let chart,ser,ws,tf='15m',last=null,token=0,prev=null,bars=[],nt=0;window.__ch={chart:()=>chart,ser:()=>ser};function notify(f){const n=Date.now();if(f||n-nt>4000){nt=n;window.onBars&&window.onBars(bars.slice(),tf)}}
+ const f2=n=>n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+ function make(){
+  if(chart)chart.remove();
+  chart=LightweightCharts.createChart(el,{autoSize:true,layout:{background:{type:'solid',color:'transparent'},textColor:'#9AA8C4',fontFamily:'Manrope, sans-serif'},
+   grid:{vertLines:{color:'rgba(205,218,245,.05)'},horzLines:{color:'rgba(205,218,245,.05)'}},
+   rightPriceScale:{borderColor:'rgba(205,218,245,.14)'},timeScale:{borderColor:'rgba(205,218,245,.14)',timeVisible:true,secondsVisible:false},
+   crosshair:{mode:0,vertLine:{color:'rgba(190,208,248,.4)'},horzLine:{color:'rgba(190,208,248,.4)'}}});
+  ser=chart.addCandlestickSeries({upColor:'#9AD9BF',downColor:'#EBA3A3',borderVisible:false,wickUpColor:'#9AD9BF',wickDownColor:'#EBA3A3'});
+  chart.subscribeCrosshairMove(p=>legend((p.seriesData&&p.seriesData.get(ser))||last));
+ }
+ function legend(b){if(!b)return;$('lg').textContent=`O ${f2(b.open)}   H ${f2(b.high)}   L ${f2(b.low)}   C ${f2(b.close)}`}
+ function price(b){
+  const e=$('px'),old=prev;prev=b.close;e.textContent=f2(b.close);
+  if(old!==null&&old!==b.close){e.className='px '+(b.close>old?'up':'dn');clearTimeout(price.t);price.t=setTimeout(()=>e.className='px',500)}
+ }
+ async function get(path){for(const h of HOSTS){try{const r=await fetch(h+path);if(r.ok)return await r.json()}catch(e){}}throw new Error('x')}
+ async function ticker(){try{const d=await get('/api/v3/ticker/24hr?symbol='+SYM);const c=+d.priceChangePercent,e=$('chg');e.textContent=(c>=0?'+':'')+c.toFixed(2)+'% (24h)';e.className='chg '+(c>=0?'up':'dn')}catch(e){}}
+ function live(t){
+  if(ws){ws.onclose=null;ws.close()}
+  ws=new WebSocket('wss://stream.binance.com:9443/ws/'+SYM.toLowerCase()+'@kline_'+tf);
+  ws.onmessage=m=>{if(t!==token)return;const k=JSON.parse(m.data).k;
+   const b={time:k.t/1000+off,open:+k.o,high:+k.h,low:+k.l,close:+k.c};ser.update(b);last=b;price(b);const L=bars[bars.length-1];if(L&&L.time===b.time)bars[bars.length-1]=b;else bars.push(b);notify()};
+  ws.onclose=()=>{if(t===token)setTimeout(()=>t===token&&live(t),3000)};
+ }
+ async function load(){
+  const t=++token;$('chmsg').hidden=true;
+  try{
+   if(typeof LightweightCharts==='undefined')throw new Error('lib');
+   make();
+   const d=await get(`/api/v3/klines?symbol=${SYM}&interval=${tf}&limit=500`);
+   if(t!==token)return;
+   bars=d.map(k=>({time:k[0]/1000+off,open:+k[1],high:+k[2],low:+k[3],close:+k[4]}));
+   ser.setData(bars);last=bars[bars.length-1];prev=null;price(last);legend(last);notify(true);
+   chart.timeScale().fitContent();live(t);ticker();
+  }catch(e){$('chmsg').hidden=false}
+ }
+ document.querySelectorAll('#tf button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#tf button').forEach(x=>x.classList.remove('a'));b.classList.add('a');tf=b.dataset.t;load()});
+ $('retry').onclick=load;
+ setInterval(ticker,30000);
+ load();
+})();
+// Market analyzer: trend, zones, plans, multi-timeframe
+(function(){
+ const f2=n=>n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+ const NM={'1m':'1 minutë','5m':'5 minuta','15m':'15 minuta','1h':'1 orë','4h':'4 orë','1d':'1 ditë'};
+ const ema=(a,n)=>{const k=2/(n+1);let e=a[0];const o=[e];for(let i=1;i<a.length;i++){e=a[i]*k+e*(1-k);o.push(e)}return o};
+ const rsi=(c,n=14)=>{let g=0,l=0;for(let i=1;i<=n;i++){const d=c[i]-c[i-1];d>=0?g+=d:l-=d}g/=n;l/=n;for(let i=n+1;i<c.length;i++){const d=c[i]-c[i-1];g=(g*(n-1)+Math.max(d,0))/n;l=(l*(n-1)+Math.max(-d,0))/n}return l===0?100:100-100/(1+g/l)};
+ const trs=b=>b.map((x,i)=>i?Math.max(x.high-x.low,Math.abs(x.high-b[i-1].close),Math.abs(x.low-b[i-1].close)):x.high-x.low);
+ const avg=(a,n)=>{const q=a.slice(-n);return q.reduce((x,y)=>x+y,0)/q.length};
+ const macdH=c=>{const a=ema(c,12),b=ema(c,26),m=a.map((v,i)=>v-b[i]),s=ema(m,9);return m.map((v,i)=>v-s[i])};
+ function piv(b,k){const H=[],L=[];for(let i=k;i<b.length-k;i++){let h=true,l=true;for(let j=1;j<=k;j++){if(b[i].high<=b[i-j].high||b[i].high<b[i+j].high)h=false;if(b[i].low>=b[i-j].low||b[i].low>b[i+j].low)l=false}if(h)H.push({i,t:b[i].time,p:b[i].high});if(l)L.push({i,t:b[i].time,p:b[i].low})}return{H,L}}
+ function zones(pv,atr,n){
+  const all=[...pv.H,...pv.L].sort((a,b)=>a.p-b.p),G=[];
+  all.forEach(q=>{const g=G[G.length-1];if(g&&q.p-g[g.length-1].p<=atr*.7&&q.p-g[0].p<=atr*1.6)g.push(q);else G.push([q])});
+  const min=atr*.35;
+  return G.map(g=>{let lo=Math.min(...g.map(x=>x.p)),hi=Math.max(...g.map(x=>x.p));if(hi-lo<min){const m=(hi+lo)/2;lo=m-min/2;hi=m+min/2}
+   return{lo,hi,n:g.length,t0:Math.min(...g.map(x=>x.t)),c:(lo+hi)/2}});
+ }
+ function plan(side,zs,opp,atr){
+  const z=zs[0];if(!z)return null;const buy=side==='buy';
+  const entry=buy?z.hi:z.lo,sl=buy?z.lo-.4*atr:z.hi+.4*atr,risk=Math.abs(entry-sl);
+  const tg=opp.map(o=>buy?o.lo:o.hi).filter(q=>buy?q>entry+risk:q<entry-risk);
+  const tp1=tg.length?tg[0]:(buy?entry+1.5*risk:entry-1.5*risk);
+  let tp2=tg.length>1?tg[1]:(buy?entry+3*risk:entry-3*risk);
+  if(buy?tp2<=tp1:tp2>=tp1)tp2=buy?tp1+1.5*risk:tp1-1.5*risk;
+  return{z,entry,sl,tp1,tp2,risk,rr1:Math.abs(tp1-entry)/risk,rr2:Math.abs(tp2-entry)/risk};
+ }
+ function analyze(b){
+  const n=b.length,c=b.map(x=>x.close),price=c[n-1];
+  const e20=ema(c,20)[n-1],e50=ema(c,50)[n-1],e200=ema(c,200)[n-1];
+  const r=rsi(c),mh=macdH(c),m1=mh[n-1],m0=mh[n-2],tr=trs(b),atr=avg(tr,14),ratio=atr/avg(tr,100);
+  const pv=piv(b,4),H=pv.H.slice(-2),L=pv.L.slice(-2);
+  const hh=H.length>1&&H[1].p>H[0].p,lh=H.length>1&&H[1].p<H[0].p,hl=L.length>1&&L[1].p>L[0].p,ll=L.length>1&&L[1].p<L[0].p;
+  const up=e20>e50&&e50>e200,dn=e20<e50&&e50<e200;
+  let s=0;s+=up?2:dn?-2:0;s+=price>e50?1:-1;s+=hh&&hl?2:lh&&ll?-2:0;s+=r>55?1:r<45?-1:0;s+=m1>0?1:-1;
+  const Z=zones(pv,atr,n);
+  const pick=(a,asc)=>{let x=a.filter(z=>z.n>=2);if(x.length<2)x=a;x.sort((p,q)=>asc?p.c-q.c:q.c-p.c);return x.slice(0,3)};
+  const buys=pick(Z.filter(z=>z.c<price&&price-z.c<14*atr),false),sells=pick(Z.filter(z=>z.c>price&&z.c-price<14*atr),true);
+  buys.forEach((z,i)=>{z.side='buy';z.id='b'+i});sells.forEach((z,i)=>{z.side='sell';z.id='s'+i});
+  return{price,atr,ratio,r,m1,m0,e20,e50,e200,up,dn,hh,hl,lh,ll,s,buys,sells,pb:plan('buy',buys,sells,atr),ps:plan('sell',sells,buys,atr)};
+ }
+ const $$=id=>document.getElementById(id);
+ let A=null,TF='15m',M=null,Zs=[],hov=null;
+ function planHTML(P,side,pref){
+  const t=side==='buy'?'Plani Buy':'Plani Sell';
+  if(!P)return `<div class="ph"><h3>${t}</h3></div><p>Nuk ka zonë të qartë ${side==='buy'?'blerjeje':'shitjeje'} në këtë timeframe. Provo një timeframe tjetër.</p>`;
+  return `<div class="ph"><h3>${t}</h3>${pref?'<span class="tag">Preferuar</span>':''}</div>
+  <div class="row"><span>Zona e hyrjes</span><span>${f2(P.z.lo)} – ${f2(P.z.hi)}</span></div>
+  <div class="row"><span>Stop loss</span><span>${f2(P.sl)}</span></div>
+  <div class="row"><span>Take profit 1</span><span>${f2(P.tp1)} (1:${P.rr1.toFixed(1)})</span></div>
+  <div class="row"><span>Take profit 2</span><span>${f2(P.tp2)} (1:${P.rr2.toFixed(1)})</span></div>
+  <div class="row"><span>Rreziku</span><span>${f2(P.risk)} $ · ~${Math.round(P.risk/.1)} pips</span></div>
+  <p style="margin-top:12px">${P.z.n} prekje historike${P.z.lo<=A.price&&A.price<=P.z.hi?' · çmimi është brenda zonës tani':''}. Hyr vetëm pas konfirmimit.</p>`;
+ }
+ function render(){
+  if(!A)return;const a=A,nm=NM[TF]||TF;
+  const lab=a.s>=5?['Bullish i fortë','up']:a.s>=3?['Bullish','up']:a.s<=-5?['Bearish i fortë','dn']:a.s<=-3?['Bearish','dn']:['Anash, pa drejtim të qartë',''];
+  $$('bt').textContent=lab[0];$$('bt').className='bt '+lab[1];
+  $$('bsub').textContent=`Pikët ${a.s>0?'+':''}${a.s} nga 7 · timeframe ${nm} · përditësuar ${new Date().toLocaleTimeString('sq-AL')}`;
+  $$('mk').style.left=((a.s+7)/14*100)+'%';
+  const trend=a.up?'në trend rritës të rregullt (EMA20 mbi EMA50 mbi EMA200)':a.dn?'në trend rënës të rregullt (EMA20 nën EMA50 nën EMA200)':'pa trend të qartë, mesataret lëvizëse janë të përziera';
+  const st=a.hh&&a.hl?'Struktura po formon maja dhe fundet gjithnjë më të larta (HH/HL).':a.lh&&a.ll?'Struktura po formon maja dhe fundet gjithnjë më të ulëta (LH/LL).':'Struktura është e përzier, çmimi po lëviz si në rang.';
+  const rt=a.r>70?'i mbiblerë, ka rrezik tërheqjeje':a.r>55?'me forcë blerëse':a.r<30?'i mbishitur, mund të vijë rikthim':a.r<45?'me presion shitës':'neutral';
+  const vt=a.ratio>1.3?'i lartë, lëvizje më të mëdha se zakonisht':a.ratio<.75?'i ulët, treg i qetë':'normal';
+  const bz=a.buys[0],sz=a.sells[0];
+  let conf='';if(M){const u=M.filter(x=>x&&x.s>0).length,d=M.filter(x=>x&&x.s<0).length;conf=` Konfluenca: ${u} nga 4 timeframe janë rritës dhe ${d} rënës.`}
+  const zt=`${bz?`Zona më e afërt e blerjes është ${f2(bz.lo)}–${f2(bz.hi)} (${bz.n} prekje), ${f2(Math.max(0,a.price-bz.hi))} $ poshtë çmimit.`:'Nuk ka zonë të qartë blerjeje afër.'} ${sz?`Zona më e afërt e shitjes është ${f2(sz.lo)}–${f2(sz.hi)} (${sz.n} prekje), ${f2(Math.max(0,sz.lo-a.price))} $ sipër çmimit.`:'Nuk ka zonë të qartë shitjeje afër.'}`;
+  let sc;
+  if(a.s>=3)sc=`Skenari kryesor është ngjitja. Hyrja Buy ka kuptim pas një tërheqjeje te zona e blerjes dhe konfirmimit (qiri rikthimi ose mbyllje mbi zonë).${a.pb?` Skenari anulohet nëse çmimi mbyllet poshtë ${f2(a.pb.sl)}.`:''}`;
+  else if(a.s<=-3)sc=`Skenari kryesor është rënia. Hyrja Sell ka kuptim pas një ngjitjeje te zona e shitjes dhe konfirmimit (qiri refuzimi ose mbyllje nën zonë).${a.ps?` Skenari anulohet nëse çmimi mbyllet mbi ${f2(a.ps.sl)}.`:''}`;
+  else sc='Tregu nuk ka drejtim të qartë. Më e sigurt është të presësh prerjen e qartë të njërës zonë, ose të tregtosh nga skajet e rangut (Buy te zona e blerjes, Sell te zona e shitjes) me stop të ngushtë.';
+  $$('adesc').innerHTML=`<p>Në ${nm}, ari është ${trend}. Çmimi ${f2(a.price)} qëndron ${a.price>a.e50?'mbi':'nën'} EMA50 (${f2(a.e50)}) dhe ${a.price>a.e200?'mbi':'nën'} EMA200 (${f2(a.e200)}). ${st}</p>
+  <p>Momenti: RSI është ${a.r.toFixed(1)}, ${rt}. MACD është ${a.m1>0?'pozitiv':'negativ'} dhe ${a.m1>a.m0?'po forcohet':'po dobësohet'}. Volatiliteti është ${vt} (ATR ${f2(a.atr)} $).${conf}</p>
+  <p>${zt}</p><p>${sc}</p>`;
+  const chip=(k,v)=>`<span class="chip">${k} <b>${v}</b></span>`;
+  $$('chips').innerHTML=chip('RSI',a.r.toFixed(1))+chip('MACD',a.m1.toFixed(2))+chip('ATR',f2(a.atr)+' $')+chip('EMA50',f2(a.e50))+chip('EMA200',f2(a.e200))+chip('Volatiliteti',a.ratio.toFixed(2)+'x');
+  $$('pb').innerHTML=planHTML(a.pb,'buy',a.s>=3);$$('ps').innerHTML=planHTML(a.ps,'sell',a.s<=-3);
+  [['pb',a.pb],['ps',a.ps]].forEach(([id,P])=>{const e=$$(id);e.onmouseenter=()=>hov=P&&P.z.id;e.onmouseleave=()=>hov=null});
+  if(M)$$('mtf').innerHTML=['15m','1h','4h','1d'].map((t,i)=>{const x=M[i];return `<button class="m ${t===TF?'on':''}" data-t="${t}"><b>${NM[t]}</b>${x?`<span class="${x.s>0?'u':x.s<0?'d':''}">${x.s>0?'▲ Rritës':x.s<0?'▼ Rënës':'◆ Anash'}${x.k?' i fortë':''} · RSI ${x.r.toFixed(0)}</span>`:'<span>pa të dhëna</span>'}</button>`}).join('');
+  document.querySelectorAll('#mtf .m').forEach(b=>b.onclick=()=>{const t=document.querySelector('#tf button[data-t="'+b.dataset.t+'"]');t&&t.click();$$('ch').scrollIntoView({behavior:'smooth',block:'center'})});
+ }
+ window.onBars=(b,tf)=>{TF=tf;if(b.length<80)return;A=analyze(b);Zs=[...A.buys,...A.sells];render()};
+ // multi-timeframe
+ const HOSTS=['https://api.binance.com','https://data-api.binance.vision'];
+ async function get(q){for(const h of HOSTS){try{const r=await fetch(h+q);if(r.ok)return await r.json()}catch(e){}}throw 0}
+ async function mtf(){
+  const out=[];
+  for(const t of ['15m','1h','4h','1d']){try{const d=await get('/api/v3/klines?symbol=PAXGUSDT&interval='+t+'&limit=260');const c=d.map(k=>+k[4]),p=c[c.length-1],e20=ema(c,20).pop(),e50=ema(c,50).pop(),e200=ema(c,200).pop();
+   const bu=p>e50&&e20>e50,be=p<e50&&e20<e50;out.push({s:bu?1:be?-1:0,k:(bu&&p>e200)||(be&&p<e200),r:rsi(c)})}catch(e){out.push(null)}}
+  M=out;render();
+ }
+ mtf();setInterval(mtf,60000);
+ // zones overlay on chart
+ const cv=$$('zc'),cx=cv.getContext('2d');
+ function frame(){
+  const bx=cv.parentElement,D=window.devicePixelRatio||1,w=bx.clientWidth,h=bx.clientHeight;
+  if(cv.width!==Math.round(w*D)||cv.height!==Math.round(h*D)){cv.width=Math.round(w*D);cv.height=Math.round(h*D)}
+  cx.setTransform(D,0,0,D,0,0);cx.clearRect(0,0,w,h);
+  const C=window.__ch.chart(),S=window.__ch.ser();
+  if($$('zt').checked&&C&&S&&Zs.length){
+   let pw=56;try{pw=C.priceScale('right').width()||56}catch(e){}
+   const R=w-pw;
+   Zs.forEach(z=>{
+    const y1=S.priceToCoordinate(z.hi),y2=S.priceToCoordinate(z.lo);if(y1===null||y2===null)return;
+    let x1=C.timeScale().timeToCoordinate(z.t0);if(x1===null||x1<0)x1=0;if(x1>=R)return;
+    const buy=z.side==='buy',col=buy?'154,217,191':'235,163,163',on=hov===z.id,top=Math.min(y1,y2),ht=Math.max(3,Math.abs(y2-y1));
+    cx.fillStyle=`rgba(${col},${on?.3:.14})`;cx.fillRect(x1,top,R-x1,ht);
+    cx.strokeStyle=`rgba(${col},${on?.9:.5})`;cx.lineWidth=1;cx.strokeRect(x1+.5,top+.5,R-x1-1,ht-1);
+    cx.font='600 12px Manrope, sans-serif';cx.fillStyle=`rgba(${col},1)`;cx.textAlign='right';cx.textBaseline='middle';
+    cx.fillText((buy?'Buy ':'Sell ')+f2(z.lo)+' – '+f2(z.hi),R-10,ht>=16?top+ht/2:top-9);
+   });
+  }
+  requestAnimationFrame(frame);
+ }
+ frame();
+})();
+</script>
+
+<script>
+// Hamburger menu (mobile)
+(function(){
+  var nav=document.querySelector('nav'),wrap=nav.querySelector('.wrap');
+  var b=document.createElement('button');
+  b.className='hb';b.type='button';b.setAttribute('aria-label','Menu');b.setAttribute('aria-expanded','false');
+  b.innerHTML='<span></span><span></span><span></span>';
+  wrap.appendChild(b);
+  function set(o){nav.classList.toggle('open',o);b.setAttribute('aria-expanded',o)}
+  b.addEventListener('click',function(e){e.stopPropagation();set(!nav.classList.contains('open'))});
+  nav.addEventListener('click',function(e){if(e.target.closest('ul a'))set(false)});
+  document.addEventListener('click',function(e){if(!nav.contains(e.target))set(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')set(false)});
+  addEventListener('resize',function(){if(innerWidth>700)set(false)});
+})();
+</script>
+
+<!-- XAU Vision PRO: Plani Pro, Prop Firm Guard, Checklist (duhet të jetë i fundit) -->
+<script src="pro.js"></script>
+</body>
+</html>
